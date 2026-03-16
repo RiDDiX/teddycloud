@@ -303,6 +303,12 @@ static void option_map_init(uint8_t settingsId)
     OPTION_BOOL("mqtt.tls_enabled", &settings->mqtt.tls_enabled, FALSE, "Enable TLS", "Enable TLS/SSL encryption for MQTT connection", LEVEL_DETAIL)
     OPTION_STRING("mqtt.tls_ca_file", &settings->mqtt.tls_ca_file, "", "CA certificate", "Path to CA certificate file (PEM format)", LEVEL_DETAIL)
     OPTION_BOOL("mqtt.tls_insecure", &settings->mqtt.tls_insecure, FALSE, "Skip verification", "Skip TLS certificate verification (insecure!)", LEVEL_DETAIL)
+    
+    OPTION_TREE_DESC("mqtt_server", "MQTT Server", LEVEL_DETAIL)
+    OPTION_BOOL("mqtt_server.enabled", &settings->mqtt_server.enabled, FALSE, "Enable MQTT Server", "Enable internal MQTT server", LEVEL_DETAIL)
+    OPTION_UNSIGNED("mqtt_server.port", &settings->mqtt_server.port, 8883, 1, 65535, "MQTT Server port", "Port for internal MQTT server", LEVEL_DETAIL)
+    OPTION_STRING("mqtt_server.cert.crt", &settings->mqtt_server.cert_crt, "certs/server/ici.pem", "Server certificate", "Path to server certificate file (PEM format)", LEVEL_DETAIL)
+    OPTION_STRING("mqtt_server.cert.key", &settings->mqtt_server.cert_key, "certs/server/ici.key", "Server key", "Path to server key file (PEM format)", LEVEL_DETAIL)
 
     OPTION_TREE_DESC("hass", "Home Assistant", LEVEL_DETAIL)
     OPTION_STRING("hass.name", &settings->hass.name, "teddyCloud - Server", "Home Assistant name", "Home Assistant name", LEVEL_DETAIL)

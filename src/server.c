@@ -30,6 +30,7 @@
 #include "returncodes.h"          // for RETURNCODE_INVALID_CONFIG
 #include "server_helpers.h"       // for httpServerUriNotFoundCallback, cus...
 #include "settings.h"             // for settings_t, settings_get_string
+#include "mqtt_server.h"          // for mqtt_server_init, mqtt_server_task
 #include "stdbool.h"              // for true, bool, false
 #include "tls.h"                  // for _TlsContext, tlsLoadCertificate
 #include "tls_adapter.h"          // for tls_context_key_log_init, tlsCache
@@ -911,6 +912,8 @@ void server_init(bool test)
         TRACE_ERROR("httpServerStart() for HTTPS failed with code %d\r\n", err);
         return;
     }
+    
+    mqtt_server_init();
 
     tonies_init();
     if (get_settings()->core.tonies_json_auto_update || test)
@@ -925,6 +928,7 @@ void server_init(bool test)
     while (!settings_get_bool("internal.exit"))
     {
         osDelayTask(250);
+        mqtt_server_task();
         settings_loop();
         systime_t now = osGetSystemTime();
         if ((now - last) / 1000 > 5)
@@ -1011,6 +1015,7 @@ void server_init(bool test)
             settings_set_bool("internal.exit", TRUE);
         }
     }
+    mqtt_server_deinit();
     tonies_deinit();
     mutex_manager_deinit();
 

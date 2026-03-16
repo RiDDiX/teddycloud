@@ -136,6 +136,14 @@ typedef struct
 
 typedef struct
 {
+    bool enabled;
+    uint32_t port;
+    char *cert_crt;
+    char *cert_key;
+} settings_mqtt_server_t;
+
+typedef struct
+{
     char *name;
     char *id;
 } settings_hass_t;
@@ -383,6 +391,7 @@ typedef struct
     settings_encode_t encode;
     settings_frontend_t frontend;
     settings_mqtt_t mqtt;
+    settings_mqtt_server_t mqtt_server;
     settings_hass_t hass;
     settings_security_mit_t security_mit;
     settings_toniebox_t toniebox;
