@@ -313,6 +313,18 @@ void mqtt_server_task()
                         else
                             socketSend(connection.socket, suback, sizeof(suback), &written, 0);
                     }
+                    else if (cmd == 0xE0) // DISCONNECT
+                    {
+                        TRACE_INFO("DISCONNECT received\r\n");
+                        if (connection.tlsContext)
+                            tlsFree(connection.tlsContext);
+                        socketClose(connection.socket);
+                        connection.active = false;
+                        connection.tlsContext = NULL;
+                        connection.socket = NULL;
+                        connection.buffer_len = 0;
+                        return; // Exit task to avoid further processing on this connection
+                    }
                     else
                     {
                         TRACE_INFO("Unknown command 0x%02X received (%zu bytes total)\r\n", cmd_raw, packet_size);
