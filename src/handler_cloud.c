@@ -1344,25 +1344,7 @@ error_t handleCloudContentMetaV3(HttpConnection *connection, const char_t *uri, 
     }
     uint8_t *token = connection->private.authentication_token;
 
-    if (client_ctx->settings->cloud.enabled && client_ctx->settings->cloud.enableV3ContentMeta)
-    {
-        if (tonieInfo->json.cloud_override)
-        {
-            token = tonieInfo->json.cloud_auth;
-            char msg[TONIE_AUTH_TOKEN_LENGTH * 2 + 1] = {0};
-            convertTokenBytesToString(token, msg, client_ctx->settings->log.logFullAuth);
-            osMemcpy((char_t *)&uri[RUID_URI_CONTENT_META_BEGIN], tonieInfo->json.cloud_ruid, osStrlen(tonieInfo->json.cloud_ruid));
-            TRACE_INFO("Serve cloud from alternative rUID %s, auth %s\r\n", tonieInfo->json.cloud_ruid, msg);
-        }
-
-        cbr_ctx_t ctx;
-        req_cbr_t cbr = getCloudCbr(connection, uri, queryString, V3_CONTENT_META, &ctx, client_ctx);
-        if (!cloud_request_get(client_ctx->settings->cloud.remote_hostname_tb2, 0, uri, queryString, token, &cbr))
-        {
-            freeTonieInfo(tonieInfo);
-            return NO_ERROR;
-        }
-    }
+    
     if (tonieInfo->exists && tonieInfo->valid)
     {
         cJSON *respJson = cJSON_CreateObject();
@@ -1409,6 +1391,25 @@ error_t handleCloudContentMetaV3(HttpConnection *connection, const char_t *uri, 
         cJSON_Delete(respJson);
         freeTonieInfo(tonieInfo);
         return error;
+    }
+    if (client_ctx->settings->cloud.enabled && client_ctx->settings->cloud.enableV3ContentMeta)
+    {
+        if (tonieInfo->json.cloud_override)
+        {
+            token = tonieInfo->json.cloud_auth;
+            char msg[TONIE_AUTH_TOKEN_LENGTH * 2 + 1] = {0};
+            convertTokenBytesToString(token, msg, client_ctx->settings->log.logFullAuth);
+            osMemcpy((char_t *)&uri[RUID_URI_CONTENT_META_BEGIN], tonieInfo->json.cloud_ruid, osStrlen(tonieInfo->json.cloud_ruid));
+            TRACE_INFO("Serve cloud from alternative rUID %s, auth %s\r\n", tonieInfo->json.cloud_ruid, msg);
+        }
+
+        cbr_ctx_t ctx;
+        req_cbr_t cbr = getCloudCbr(connection, uri, queryString, V3_CONTENT_META, &ctx, client_ctx);
+        if (!cloud_request_get(client_ctx->settings->cloud.remote_hostname_tb2, 0, uri, queryString, token, &cbr))
+        {
+            freeTonieInfo(tonieInfo);
+            return NO_ERROR;
+        }
     }
 
     freeTonieInfo(tonieInfo);
