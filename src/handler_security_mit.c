@@ -83,6 +83,7 @@ error_t handleSecMitDomain(HttpConnection *connection, const char_t *uri, const 
 
     char *hashes[] = {
         "863a5a96d45d2e8736d1c6a6e1d8b615b6436737", // fbx
+        "26884d3f9c6aa6234390365388a2dc289e750640", // nfweu
         //"b26f5cd0a1a9845fd5bb8fba7a48b0b3d011ac07"  // dev
     };
     size_t numHashes = sizeof(hashes) / sizeof(hashes[0]);
