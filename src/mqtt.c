@@ -538,7 +538,7 @@ void mqtt_thread(void *arg)
         {
             if (mqttConnected)
             {
-                TRACE_INFO("[MQTT] Disconnecting (disabled by setting)\r\n");
+                TRACE_INFO("Disconnecting (disabled by setting)\r\n");
                 mqttClientClose(&mqtt_context);
                 mqttConnected = FALSE;
             }
@@ -555,11 +555,11 @@ void mqtt_thread(void *arg)
             if (error)
             {
                 errors++;
-                TRACE_WARNING("[MQTT] Connection attempt #%" PRIu32 " failed, retrying in %" PRIu32 "ms\r\n", errors, retry_delay_ms);
+                TRACE_WARNING("Connection attempt #%" PRIu32 " failed, retrying in %" PRIu32 "ms\r\n", errors, retry_delay_ms);
 
                 if (errors >= 10 && get_settings()->mqtt.disable_on_error)
                 {
-                    TRACE_ERROR("[MQTT] %" PRIu32 " consecutive failures (disable_on_error is set, but MQTT will keep retrying)\r\n", errors);
+                    TRACE_ERROR("%" PRIu32 " consecutive failures (disable_on_error is set, but MQTT will keep retrying)\r\n", errors);
                 }
 
                 osDelayTask(retry_delay_ms);
@@ -576,10 +576,10 @@ void mqtt_thread(void *arg)
                 continue;
             }
 
-            TRACE_INFO("[MQTT] Connected to broker successfully\r\n");
+            TRACE_INFO("Connected to broker successfully\r\n");
             if (errors > 0)
             {
-                TRACE_INFO("[MQTT] Reconnected after %" PRIu32 " failed attempt(s)\r\n", errors);
+                TRACE_INFO("Reconnected after %" PRIu32 " failed attempt(s)\r\n", errors);
             }
             mqttConnected = TRUE;
             mqtt_fail = false;
@@ -602,7 +602,7 @@ void mqtt_thread(void *arg)
 
         if (error || mqtt_fail)
         {
-            TRACE_WARNING("[MQTT] Connection lost (error=%s, mqtt_fail=%s), reconnecting...\r\n",
+            TRACE_WARNING("Connection lost (error=%s, mqtt_fail=%s), reconnecting...\r\n",
                           error ? error2text(error) : "none", mqtt_fail ? "true" : "false");
             mqttClientClose(&mqtt_context);
             mqttConnected = FALSE;
@@ -830,7 +830,7 @@ void mqtt_box_cmd_stop_rx(t_ha_info *ha_info, const t_ha_entity *entity, void *c
     {
         return;
     }
-    TRACE_INFO("[MQTT] Received stop command for overlay %" PRIu8 "\r\n", cmd_ctx->overlay_id);
+    TRACE_INFO("Received stop command for overlay %" PRIu8 "\r\n", cmd_ctx->overlay_id);
     tbs_cmd_stop(cmd_ctx->overlay_id);
 }
 
@@ -842,7 +842,7 @@ void mqtt_box_cmd_vol_spk_rx(t_ha_info *ha_info, const t_ha_entity *entity, void
         return;
     }
     uint32_t val = (uint32_t)atoi(payload);
-    TRACE_INFO("[MQTT] Received volLimitSpk=%" PRIu32 " for overlay %" PRIu8 "\r\n", val, cmd_ctx->overlay_id);
+    TRACE_INFO("Received volLimitSpk=%" PRIu32 " for overlay %" PRIu8 "\r\n", val, cmd_ctx->overlay_id);
     tbs_cmd_set_vol_limit_spk(cmd_ctx->overlay_id, val);
 }
 
@@ -867,7 +867,7 @@ void mqtt_box_cmd_vol_hdp_rx(t_ha_info *ha_info, const t_ha_entity *entity, void
         return;
     }
     uint32_t val = (uint32_t)atoi(payload);
-    TRACE_INFO("[MQTT] Received volLimitHdp=%" PRIu32 " for overlay %" PRIu8 "\r\n", val, cmd_ctx->overlay_id);
+    TRACE_INFO("Received volLimitHdp=%" PRIu32 " for overlay %" PRIu8 "\r\n", val, cmd_ctx->overlay_id);
     tbs_cmd_set_vol_limit_hdp(cmd_ctx->overlay_id, val);
 }
 
@@ -892,7 +892,7 @@ void mqtt_box_cmd_led_rx(t_ha_info *ha_info, const t_ha_entity *entity, void *ct
         return;
     }
     uint32_t val = (uint32_t)atoi(payload);
-    TRACE_INFO("[MQTT] Received led=%" PRIu32 " for overlay %" PRIu8 "\r\n", val, cmd_ctx->overlay_id);
+    TRACE_INFO("Received led=%" PRIu32 " for overlay %" PRIu8 "\r\n", val, cmd_ctx->overlay_id);
     tbs_cmd_set_led(cmd_ctx->overlay_id, val);
 }
 
@@ -917,7 +917,7 @@ void mqtt_box_cmd_slap_en_rx(t_ha_info *ha_info, const t_ha_entity *entity, void
         return;
     }
     bool enabled = !osStrcasecmp(payload, "TRUE");
-    TRACE_INFO("[MQTT] Received slapEnabled=%s for overlay %" PRIu8 "\r\n", enabled ? "true" : "false", cmd_ctx->overlay_id);
+    TRACE_INFO("Received slapEnabled=%s for overlay %" PRIu8 "\r\n", enabled ? "true" : "false", cmd_ctx->overlay_id);
     tbs_cmd_set_slap_enabled(cmd_ctx->overlay_id, enabled);
 }
 
@@ -940,7 +940,7 @@ void mqtt_box_cmd_slap_dir_rx(t_ha_info *ha_info, const t_ha_entity *entity, voi
         return;
     }
     bool back_left = !osStrcasecmp(payload, "TRUE");
-    TRACE_INFO("[MQTT] Received slapDir=%s for overlay %" PRIu8 "\r\n", back_left ? "back-left" : "forw-left", cmd_ctx->overlay_id);
+    TRACE_INFO("Received slapDir=%s for overlay %" PRIu8 "\r\n", back_left ? "back-left" : "forw-left", cmd_ctx->overlay_id);
     tbs_cmd_set_slap_dir(cmd_ctx->overlay_id, back_left);
 }
 

@@ -147,12 +147,12 @@ bool tbs_cmd_stop(uint8_t overlay_id)
     toniebox_state_t *state = get_toniebox_state_id(overlay_id);
     if (state->box.stream_ctx.active && !state->box.stream_ctx.quit)
     {
-        TRACE_INFO("CMD: Stopping active stream on overlay %" PRIu8 "\r\n", overlay_id);
+        TRACE_INFO("Stopping active stream on overlay %" PRIu8 "\r\n", overlay_id);
         state->box.stream_ctx.active = false;
         sse_sendEvent("cmd", "stop", true);
         return true;
     }
-    TRACE_INFO("CMD: No active stream to stop on overlay %" PRIu8 "\r\n", overlay_id);
+    TRACE_INFO("No active stream to stop on overlay %" PRIu8 "\r\n", overlay_id);
     return false;
 }
 
@@ -167,7 +167,7 @@ bool tbs_cmd_set_vol_limit_spk(uint8_t overlay_id, uint32_t level)
     {
         return false;
     }
-    TRACE_INFO("CMD: Setting speaker volume limit to %" PRIu32 " on overlay %" PRIu8 "\r\n", level, overlay_id);
+    TRACE_INFO("Setting speaker volume limit to %" PRIu32 " on overlay %" PRIu8 "\r\n", level, overlay_id);
     settings_set_unsigned_id("toniebox.max_vol_spk", level, overlay_id);
     sse_sendEvent("cmd", "vol_limit_spk", true);
     return true;
@@ -184,7 +184,7 @@ bool tbs_cmd_set_vol_limit_hdp(uint8_t overlay_id, uint32_t level)
     {
         return false;
     }
-    TRACE_INFO("CMD: Setting headphone volume limit to %" PRIu32 " on overlay %" PRIu8 "\r\n", level, overlay_id);
+    TRACE_INFO("Setting headphone volume limit to %" PRIu32 " on overlay %" PRIu8 "\r\n", level, overlay_id);
     settings_set_unsigned_id("toniebox.max_vol_hdp", level, overlay_id);
     sse_sendEvent("cmd", "vol_limit_hdp", true);
     return true;
@@ -201,7 +201,7 @@ bool tbs_cmd_set_led(uint8_t overlay_id, uint32_t mode)
     {
         return false;
     }
-    TRACE_INFO("CMD: Setting LED mode to %" PRIu32 " on overlay %" PRIu8 "\r\n", mode, overlay_id);
+    TRACE_INFO("Setting LED mode to %" PRIu32 " on overlay %" PRIu8 "\r\n", mode, overlay_id);
     settings_set_unsigned_id("toniebox.led", mode, overlay_id);
     sse_sendEvent("cmd", "led", true);
     return true;
@@ -218,7 +218,7 @@ bool tbs_cmd_set_slap_enabled(uint8_t overlay_id, bool enabled)
     {
         return false;
     }
-    TRACE_INFO("CMD: Setting slap enabled to %s on overlay %" PRIu8 "\r\n", enabled ? "true" : "false", overlay_id);
+    TRACE_INFO("Setting slap enabled to %s on overlay %" PRIu8 "\r\n", enabled ? "true" : "false", overlay_id);
     settings_set_bool_id("toniebox.slap_enabled", enabled, overlay_id);
     sse_sendEvent("cmd", "slap_enabled", true);
     return true;
@@ -235,7 +235,7 @@ bool tbs_cmd_set_slap_dir(uint8_t overlay_id, bool back_left)
     {
         return false;
     }
-    TRACE_INFO("CMD: Setting slap direction to %s on overlay %" PRIu8 "\r\n", back_left ? "back-left" : "forw-left", overlay_id);
+    TRACE_INFO("Setting slap direction to %s on overlay %" PRIu8 "\r\n", back_left ? "back-left" : "forw-left", overlay_id);
     settings_set_bool_id("toniebox.slap_back_left", back_left, overlay_id);
     sse_sendEvent("cmd", "slap_dir", true);
     return true;
