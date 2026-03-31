@@ -279,6 +279,10 @@ static void option_map_init(uint8_t settingsId)
     OPTION_UNSIGNED("toniebox.field2", &settings->toniebox.field2, 7, 0, UINT32_MAX, "Field 2", "Unknown Toniebox setting, default 7", LEVEL_EXPERT)
     OPTION_UNSIGNED("toniebox.field6", &settings->toniebox.field6, 1, 0, UINT32_MAX, "Field 6", "Unknown Toniebox setting, default 1", LEVEL_EXPERT)
 
+    OPTION_TREE_DESC("toniebox2", "Toniebox 2", LEVEL_BASIC)
+    OPTION_BOOL("toniebox2.baby_mode", &settings->toniebox2.baby_mode, FALSE, "Baby mode", "Enable baby mode (1 year).", LEVEL_BASIC)
+    OPTION_UNSIGNED("toniebox2.lightring_brightness", &settings->toniebox2.lightring_brightness, 100, 0, 100, "LED brightness", "Lightring brightness", LEVEL_BASIC)
+
     OPTION_TREE_DESC("rtnl", "RTNL log", LEVEL_EXPERT)
     OPTION_BOOL("rtnl.logRaw", &settings->rtnl.logRaw, FALSE, "Log RTNL (bin)", "Enable logging for raw RTNL data", LEVEL_EXPERT)
     OPTION_BOOL("rtnl.logHuman", &settings->rtnl.logHuman, FALSE, "Log RTNL (csv)", "Enable logging for human-readable RTNL data", LEVEL_EXPERT)

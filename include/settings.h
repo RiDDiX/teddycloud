@@ -164,6 +164,12 @@ typedef struct
 
 typedef struct
 {
+    bool baby_mode; 
+    uint8_t lightring_brightness;
+} settings_toniebox2_t;
+
+typedef struct
+{
     char *ca;
     char *ca_der;
     char *ca_key;
@@ -395,6 +401,7 @@ typedef struct
     settings_hass_t hass;
     settings_security_mit_t security_mit;
     settings_toniebox_t toniebox;
+    settings_toniebox2_t toniebox2;
     settings_internal_t internal;
     settings_log_t log;
     settings_rtnl_t rtnl;
