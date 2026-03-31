@@ -232,10 +232,15 @@ static void option_map_init(uint8_t settingsId)
     OPTION_BOOL("cloud.enableV1Claim", &settings->cloud.enableV1Claim, TRUE, "Forward 'claim'", "Forward 'claim' queries to claim tonies in the household in the tonies cloud", LEVEL_BASIC)
     OPTION_BOOL("cloud.enableV1CloudReset", &settings->cloud.enableV1CloudReset, FALSE, "Forward 'cloudReset'", "Forward 'cloudReset' queries to tonies cloud", LEVEL_DETAIL)
     OPTION_BOOL("cloud.enableV1FreshnessCheck", &settings->cloud.enableV1FreshnessCheck, TRUE, "Forward 'freshnessCheck'", "Forward 'freshnessCheck' queries to mark new content as updated to tonies cloud", LEVEL_DETAIL)
+    OPTION_BOOL("cloud.enableV3FreshnessCheck", &settings->cloud.enableV3FreshnessCheck, TRUE, "Forward 'freshnessCheck' v3", "Forward 'freshnessCheck' v3 queries to mark new content as updated to tonies cloud", LEVEL_DETAIL)
     OPTION_BOOL("cloud.enableV1Log", &settings->cloud.enableV1Log, FALSE, "Forward 'log'", "Forward 'log' queries to tonies cloud", LEVEL_EXPERT)
     OPTION_BOOL("cloud.enableV1Time", &settings->cloud.enableV1Time, FALSE, "Forward 'time'", "Forward 'time' queries to tonies cloud", LEVEL_EXPERT)
     OPTION_BOOL("cloud.enableV1Ota", &settings->cloud.enableV1Ota, FALSE, "Forward 'ota'", "Forward 'ota' queries to tonies cloud", LEVEL_EXPERT)
+    OPTION_BOOL("cloud.enableV3Ota", &settings->cloud.enableV3Ota, TRUE, "Forward 'check-ota' v3", "Forward 'check-ota' v3 queries to tonies cloud", LEVEL_EXPERT)
     OPTION_BOOL("cloud.enableV2Content", &settings->cloud.enableV2Content, TRUE, "Forward 'content'", "Forward 'content' queries to download content from the tonies cloud", LEVEL_BASIC)
+    OPTION_BOOL("cloud.enableV3SetupStatus", &settings->cloud.enableV3SetupStatus, TRUE, "Forward 'setup-status' v3", "Forward 'setup-status' v3 queries to tonies cloud", LEVEL_DETAIL)
+    OPTION_BOOL("cloud.enableV3ContentMeta", &settings->cloud.enableV3ContentMeta, TRUE, "Forward 'content-meta' v3", "Forward 'content-meta' v3 queries to tonies cloud", LEVEL_DETAIL)
+    OPTION_BOOL("cloud.enableV3Chapter", &settings->cloud.enableV3Chapter, TRUE, "Forward 'chapter' v3", "Forward 'chapter' v3 queries to tonies cloud", LEVEL_DETAIL)
     OPTION_BOOL("cloud.cacheOta", &settings->cloud.cacheOta, TRUE, "Cache OTA", "Cache OTA files in firmware dir of local server (this still blocks OTA if local OTA delivery is disabled)", LEVEL_EXPERT)
     OPTION_BOOL("cloud.localOta", &settings->cloud.localOta, FALSE, "Local OTA delivery", "Send local OTA files in firmware dir", LEVEL_EXPERT)
     OPTION_BOOL("cloud.cacheContent", &settings->cloud.cacheContent, TRUE, "Cache content", "Cache cloud content on local server", LEVEL_DETAIL)
@@ -274,6 +279,10 @@ static void option_map_init(uint8_t settingsId)
     OPTION_UNSIGNED("toniebox.field2", &settings->toniebox.field2, 7, 0, UINT32_MAX, "Field 2", "Unknown Toniebox setting, default 7", LEVEL_EXPERT)
     OPTION_UNSIGNED("toniebox.field6", &settings->toniebox.field6, 1, 0, UINT32_MAX, "Field 6", "Unknown Toniebox setting, default 1", LEVEL_EXPERT)
 
+    OPTION_TREE_DESC("toniebox2", "Toniebox 2", LEVEL_BASIC)
+    OPTION_BOOL("toniebox2.baby_mode", &settings->toniebox2.baby_mode, FALSE, "Baby mode", "Enable baby mode (1 year).", LEVEL_BASIC)
+    OPTION_UNSIGNED("toniebox2.lightring_brightness", &settings->toniebox2.lightring_brightness, 100, 0, 100, "LED brightness", "Lightring brightness", LEVEL_BASIC)
+
     OPTION_TREE_DESC("rtnl", "RTNL log", LEVEL_EXPERT)
     OPTION_BOOL("rtnl.logRaw", &settings->rtnl.logRaw, FALSE, "Log RTNL (bin)", "Enable logging for raw RTNL data", LEVEL_EXPERT)
     OPTION_BOOL("rtnl.logHuman", &settings->rtnl.logHuman, FALSE, "Log RTNL (csv)", "Enable logging for human-readable RTNL data", LEVEL_EXPERT)
@@ -295,6 +304,15 @@ static void option_map_init(uint8_t settingsId)
     OPTION_UNSIGNED("mqtt.qosLevel", &settings->mqtt.qosLevel, 0, 0, 2, "QoS level", "QoS level", LEVEL_DETAIL)
     OPTION_BOOL("mqtt.retain_will", &settings->mqtt.retain_will, TRUE, "Retain last will", "Retain last will message", LEVEL_DETAIL)
     OPTION_BOOL("mqtt.disable_on_error", &settings->mqtt.disable_on_error, FALSE, "Disable MQTT on error", "Disable MQTT if there were to many errors", LEVEL_DETAIL)
+    OPTION_BOOL("mqtt.tls_enabled", &settings->mqtt.tls_enabled, FALSE, "Enable TLS", "Enable TLS/SSL encryption for MQTT connection", LEVEL_DETAIL)
+    OPTION_STRING("mqtt.tls_ca_file", &settings->mqtt.tls_ca_file, "", "CA certificate", "Path to CA certificate file (PEM format)", LEVEL_DETAIL)
+    OPTION_BOOL("mqtt.tls_insecure", &settings->mqtt.tls_insecure, FALSE, "Skip verification", "Skip TLS certificate verification (insecure!)", LEVEL_DETAIL)
+    
+    OPTION_TREE_DESC("mqtt_server", "MQTT Server", LEVEL_DETAIL)
+    OPTION_BOOL("mqtt_server.enabled", &settings->mqtt_server.enabled, FALSE, "Enable MQTT Server", "Enable internal MQTT server", LEVEL_DETAIL)
+    OPTION_UNSIGNED("mqtt_server.port", &settings->mqtt_server.port, 8883, 1, 65535, "MQTT Server port", "Port for internal MQTT server", LEVEL_DETAIL)
+    OPTION_STRING("mqtt_server.cert.crt", &settings->mqtt_server.cert_crt, "certs/server/ici.pem", "Server certificate", "Path to server certificate file (PEM format)", LEVEL_DETAIL)
+    OPTION_STRING("mqtt_server.cert.key", &settings->mqtt_server.cert_key, "certs/server/ici.key", "Server key", "Path to server key file (PEM format)", LEVEL_DETAIL)
 
     OPTION_TREE_DESC("hass", "Home Assistant", LEVEL_DETAIL)
     OPTION_STRING("hass.name", &settings->hass.name, "teddyCloud - Server", "Home Assistant name", "Home Assistant name", LEVEL_DETAIL)
@@ -1709,12 +1727,13 @@ bool test_boxine_ca(uint8_t settingsId)
     const char *client_ca_crt = settings_get_string_id("internal.client.ca", settingsId);
 
     size_t boxine_ca_length = 2008;
+    size_t tb2_ca_length = 898;
     size_t ca_length = osStrlen(client_ca_crt);
     if (ca_length > 0)
     {
-        if (ca_length != boxine_ca_length)
+        if (ca_length != boxine_ca_length && ca_length != tb2_ca_length)
         {
-            TRACE_WARNING("Client CA length mismatch %" PRIuSIZE " expected %" PRIuSIZE "\r\n", ca_length, boxine_ca_length);
+            TRACE_WARNING("Client CA length mismatch %" PRIuSIZE " expected %" PRIuSIZE " or %" PRIuSIZE "\r\n", ca_length, boxine_ca_length, tb2_ca_length);
             return false;
         }
         else
